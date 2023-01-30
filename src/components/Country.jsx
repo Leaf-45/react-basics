@@ -5,18 +5,27 @@ import WorkspacePremiumOutlinedIcon from '@mui/icons-material/WorkspacePremiumOu
 
 class Country extends Component {
   state = { 
-    name: "United States",        
-    gold: 0,
+    name: this.props.name,        
+    gold: this.props.gold,
     }
-    handleIncrement = () => {
-        this.setState({gold: this.state.gold += 1})
+    handleIncrement = () => 
+    {
+      this.setState({gold: this.state.gold + 1})
+    }
+    handleDecrement = () => 
+    {
+      if (this.state.gold > 0)
+      {
+        this.setState({gold: this.state.gold - 1})
       }
+    }
   render() { 
     return ( 
     <div className='center'>
         <div>{this.state.name}</div>
         <div>Gold Medals {this.state.gold} <WorkspacePremiumOutlinedIcon style={{ color:"gold"}}/></div>
         <Button variant='outlined' onClick={ this.handleIncrement }>+</Button>
+        <Button variant='outlined' onClick={ this.handleDecrement }>-</Button>
     </div> );
     }
 }
