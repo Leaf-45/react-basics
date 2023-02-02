@@ -1,31 +1,45 @@
 import React, { Component } from 'react';
-import { Button } from '@mui/material';
-import WorkspacePremiumOutlinedIcon from '@mui/icons-material/WorkspacePremiumOutlined';
-
+import Medal from './Medal'
 
 class Country extends Component {
-  state = { 
-    name: this.props.name,        
-    gold: this.props.gold,
-    }
-    handleIncrement = () => 
-    {
-      this.setState({gold: this.state.gold + 1})
-    }
-    handleDecrement = () => 
-    {
-      if (this.state.gold > 0)
-      {
-        this.setState({gold: this.state.gold - 1})
-      }
-    }
   render() { 
+    
+    const { onAdd, onSubtract, country } = this.props;
     return ( 
     <div className='center'>
-        <div>{this.state.name}</div>
-        <div>Gold Medals {this.state.gold} <WorkspacePremiumOutlinedIcon style={{ color:"gold"}}/></div>
-        <Button variant='outlined' onClick={ this.handleIncrement }>+</Button>
-        <Button variant='outlined' onClick={ this.handleDecrement }>-</Button>
+        
+        <div>{country.name}</div>
+        <Medal
+        key={country.id} 
+        country={country}
+        medalName={"Gold"}
+        medalCount={"goldMedalCount"}
+        medalColor={"Gold"}
+        onAdd={onAdd}
+        onSubtract={onSubtract}
+        />
+
+        <Medal
+        key={country.id} 
+        country={country}
+        medalName={"Silver"}
+        medalCount={"silverMedalCount"}
+        medalColor={"silver"}
+        onAdd={onAdd}
+        onSubtract={onSubtract}
+        />
+
+        <Medal
+        key={country.id} 
+        country={country}
+        medalName={"Bronze"}
+        medalCount={"bronzeMedalCount"}
+        medalColor={"#FF5733"}
+        onAdd={onAdd}
+        onSubtract={onSubtract}
+        />
+
+    <p>Total Medals: {country.goldMedalCount + country.silverMedalCount + country.bronzeMedalCount}</p>
     </div> );
     }
 }
