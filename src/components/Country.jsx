@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import Medal from './Medal'
+import { Button } from '@mui/material';
 
 class Country extends Component {
   render() { 
     
-    const { onAdd, onSubtract, country } = this.props;
+    const { onDelete, onAdd, onSubtract, country } = this.props;
     return ( 
     <div className='center'>
         
         <div>{country.name}</div>
-        <Medal
-        key={country.id} 
+        <Medal 
         country={country}
         medalName={"Gold"}
         medalCount={"goldMedalCount"}
@@ -20,7 +20,6 @@ class Country extends Component {
         />
 
         <Medal
-        key={country.id} 
         country={country}
         medalName={"Silver"}
         medalCount={"silverMedalCount"}
@@ -30,7 +29,6 @@ class Country extends Component {
         />
 
         <Medal
-        key={country.id} 
         country={country}
         medalName={"Bronze"}
         medalCount={"bronzeMedalCount"}
@@ -40,6 +38,8 @@ class Country extends Component {
         />
 
     <p>Total Medals: {country.goldMedalCount + country.silverMedalCount + country.bronzeMedalCount}</p>
+
+    <Button onClick={ () => onDelete(country.id) } variant='contained'>Delete</Button>
     </div> );
     }
 }

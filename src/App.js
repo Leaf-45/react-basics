@@ -1,7 +1,7 @@
-import { TocTwoTone } from '@mui/icons-material';
 import React, { Component } from 'react';
 import './App.css';
 import Country from './components/Country';
+import NewCountry from './components/NewCountry';
 
 
 class App extends Component {
@@ -41,6 +41,17 @@ class App extends Component {
       const bronze = this.state.countries.reduce((a, b) => a + b.bronzeMedalCount, 0);
       return gold + silver + bronze;
     }
+    handleDelete = (countryID) => {
+      const countries = this.state.countries.filter(c => c.id !== countryID);
+      this.setState({ countries:countries });
+    }
+    addNewCountry = (countryName) => 
+    {
+      const { countries } = this.state;
+      const id = countries.length === 0 ? 1 : Math.max(...countries.map(country => country.id)) + 1;
+      const mutableCountries = countries.concat({ id: id, name: countryName, goldMedalCount: 0, silverMedalCount: 0, bronzeMedalCount: 0 });
+      this.setState({countries: mutableCountries})
+    }
   
   render() { 
     return ( 
@@ -52,8 +63,10 @@ class App extends Component {
           country={country}
           onAdd={this.handleIncrement}
           onSubtract={this.handleDecrement}
+          onDelete={this.handleDelete}
           />) 
         }
+        <NewCountry addNewCountry={this.addNewCountry}/>
       </div>
      );
   }

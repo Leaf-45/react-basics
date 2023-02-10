@@ -9,8 +9,8 @@ class Medal extends Component
         return ( 
         <div>
             <div> {medalName} Medals {country[medalCount]} <WorkspacePremiumOutlinedIcon style={{ color: medalColor}}/></div>
-            <Button variant='outlined' onClick={ () => onAdd(country.id, medalCount)}>+</Button>
             <Button variant='outlined' onClick={ () => onSubtract(country.id, medalCount) }>-</Button>
+            <Button variant='outlined' onClick={ () => onAdd(country.id, medalCount)}>+</Button>   
         </div> );
         }
 }
