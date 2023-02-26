@@ -1,75 +1,91 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import axios from 'axios';
 import Country from './components/Country';
 import NewCountry from './components/NewCountry';
 
+const App = () => 
+{
+  const [countries, setMedals] = useState([]);
+  //const apiEndpoint = "https://localhost:5001/api/country";
+  const apiEndpoint = "https://medals-api.azurewebsites.net/api/country"
 
-class App extends Component {
-  state =
-  {
-    countries: [
-      { id: 1, name: 'United States', goldMedalCount: 2, silverMedalCount: 2, bronzeMedalCount: 2 },
-      { id: 2, name: 'China', goldMedalCount: 3, silverMedalCount: 2, bronzeMedalCount: 2 },
-      { id: 3, name: 'Germany', goldMedalCount: 0, silverMedalCount: 2, bronzeMedalCount: 2 },
-    ]
-  }
-
-  handleIncrement = (id, medal) => 
-    {
-      const countries = [...this.state.countries];
-      const idx = countries.findIndex((c) => c.id === id);
-      countries[idx][medal] += 1;
-
-      this.setState({countries: countries})
+  useEffect(() => {
+    async function fetchData() {
+      const { data: fetchedMedals } = await axios.get(apiEndpoint);
+      setMedals(fetchedMedals);
     }
-    handleDecrement = (id, medal) => 
-    {
-      const countries = [...this.state.countries];
-      const idx = countries.findIndex((c) => c.id === id);
-      if (countries[idx][medal] > 0)
-      {
-      countries[idx][medal] -= 1;
+    fetchData();
+  }, []);
 
-      this.setState({countries: countries})
+  const handleIncrement = (id, medal) => 
+    {
+      const country = [...countries];
+      const idx = country.findIndex((c) => c.id === id);
+      country[idx][medal] += 1;
+
+      setMedals(country)
+    }
+    const handleDecrement = (id, medal) => 
+    {
+      const country = [...countries];
+      const idx = country.findIndex((c) => c.id === id);
+      if (country[idx][medal] > 0)
+      {
+      country[idx][medal] -= 1;
+
+      setMedals(country)
       }
     }
 
-    totalMedals = () => 
+    const totalMedals = () => 
     {
-      const gold = this.state.countries.reduce((a, b) => a + b.goldMedalCount, 0);
-      const silver = this.state.countries.reduce((a, b) => a + b.silverMedalCount, 0);
-      const bronze = this.state.countries.reduce((a, b) => a + b.bronzeMedalCount, 0);
+      const gold = countries.reduce((a, b) => a + b.goldMedalCount, 0);
+      const silver = countries.reduce((a, b) => a + b.silverMedalCount, 0);
+      const bronze = countries.reduce((a, b) => a + b.bronzeMedalCount, 0);
       return gold + silver + bronze;
     }
-    handleDelete = (countryID) => {
-      const countries = this.state.countries.filter(c => c.id !== countryID);
-      this.setState({ countries:countries });
+    const handleDelete = async (countryID) => {
+      const originalCountries = countries
+      setMedals(countries.filter(c => c.id !== countryID));
+      try 
+      {
+        await axios.delete(`${apiEndpoint}?id=${countryID}`);
+      } catch (error) 
+      {
+        if (error.response && error.response.status === 404) 
+        {
+          console.log("The record does not exist - it may have already been deleted");
+        }
+        else 
+        {
+          alert('An error occurred while deleting a word');
+          setMedals(originalCountries);
+        }
+      }
     }
-    addNewCountry = (countryName) => 
+    const addNewCountry = async (countryName) => 
     {
-      const { countries } = this.state;
-      const id = countries.length === 0 ? 1 : Math.max(...countries.map(country => country.id)) + 1;
-      const mutableCountries = countries.concat({ id: id, name: countryName, goldMedalCount: 0, silverMedalCount: 0, bronzeMedalCount: 0 });
-      this.setState({countries: mutableCountries})
+      const { data: post } = await axios.post(apiEndpoint, { name: countryName, goldMedalCount: 0, silverMedalCount: 0, bronzeMedalCount: 0 });
+      setMedals(countries.concat(post))
     }
-  
-  render() { 
-    return ( 
+
+
+  return ( 
       <div>
-        <h1 style={{textAlign: "center"}}>Total Medals: {this.totalMedals()}</h1>
-        { this.state.countries.map(country =>
+        <h1 style={{textAlign: "center"}}>Total Medals: {totalMedals()}</h1>
+        {countries.map(country =>
         <Country
           key={country.id} 
           country={country}
-          onAdd={this.handleIncrement}
-          onSubtract={this.handleDecrement}
-          onDelete={this.handleDelete}
+          onAdd={handleIncrement}
+          onSubtract={handleDecrement}
+          onDelete={handleDelete}
           />) 
         }
-        <NewCountry addNewCountry={this.addNewCountry}/>
+        <NewCountry addNewCountry={addNewCountry}/>
       </div>
      );
-  }
 }
 
 export default App;
